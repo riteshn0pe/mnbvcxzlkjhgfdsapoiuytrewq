@@ -1,0 +1,45 @@
+agent:
+  vision: true
+  reasoning: true
+  max_steps: 20
+
+llm_profiles:
+  default:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  manager:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  executor:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  codeact:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  text_manipulator:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  app_opener:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+      scripter:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0
+
+  structured_output:
+    provider: GoogleGenAI
+    model: gemini-3-flash-preview
+    temperature: 0.0

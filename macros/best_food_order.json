@@ -1,0 +1,4 @@
+{
+  "name": "best food order",
+  "template": "customize :\n{Dish} = enter_your_dish\n{Restaurant} = enter_restaurant\n{App} = any\n\nGoal : Order {Dish} from {Restaurant} using {App}.\n\nComparison Logic:\n1. If {Restaurant} is \"enter_restaurant\": Do not select the first result. Scroll and browse through at least 5-8 different restaurants serving {Dish}. Compare their Ratings vs. Price. Select the \"Best Value\" option (highest rating for the lowest relative price).\n2. If {App} is \"any\": Quickly check available delivery apps. Choose the one with the lowest total checkout price (including delivery fee) for the selected item.\n3. If {Dish} is \"enter_your_dish\": Browse the \"Bestsellers\" or \"Recommended\" category and pick the item with the highest number of positive reviews.\n\nFinal Action: Add the best value item to cart and stop at the payment screen."
+}
