@@ -6,7 +6,7 @@ import subprocess
 from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from agent_brain import create_agent
+from agent_brain import create_agent , announce_action
 
 # --- Logging Setup ---
 logging.basicConfig(level=logging.INFO)
@@ -27,6 +27,11 @@ class CommandRequest(BaseModel):
     app_card: Optional[str] = None
     use_structured_output: bool = False
     reasoning: bool = False 
+
+# Wireless Request Model
+class WirelessRequest(BaseModel):
+    ip: str
+    port: str
 
 class Macro(BaseModel):
     name: str
@@ -53,6 +58,29 @@ class AgentState:
         self.step_count = 0 
 
 state = AgentState()
+
+#  Wireless ADB Helper
+def connect_wireless_adb(ip: str, port: str):
+    """Attempts to connect to a device via Wireless ADB."""
+    target = f"{ip}:{port}"
+    logger.info(f"📡 Connecting to wireless device: {target}")
+    
+    try:
+        # Run adb connect
+        proc = subprocess.run(
+            ["adb", "connect", target], 
+            capture_output=True, text=True, timeout=10
+        )
+        output = proc.stdout.strip()
+        
+        if "connected to" in output:
+            return {"success": True, "message": f"Connected to {target}"}
+        else:
+            return {"success": False, "message": f"Failed: {output}"}
+            
+    except Exception as e:
+        logger.error(f"Wireless connection failed: {e}")
+        return {"success": False, "message": str(e)}
 
 # --- Helpers ---
 def get_current_keyboard() -> Optional[str]:
@@ -309,6 +337,26 @@ async def create_guide(g: AppGuide):
         return {"status": "saved", "filename": f"{safe_title}.json"}
     except Exception as e:
         raise HTTPException(500, str(e))
+    
+# Wireless Connection Endpoint
+@app.post("/connect_wireless")
+async def connect_wireless_endpoint(req: WirelessRequest):
+    logger.info(f"📶 Wireless request received: {req.ip}:{req.port}")
+    
+    # 1. Announce intent
+    announce_action(f"Initiating wireless connection to {req.ip}")
+    
+    # 2. Attempt connection
+    result = connect_wireless_adb(req.ip, req.port)
+    
+    if result["success"]:
+        # 3. Success Voice
+        announce_action("Wireless connection established successfully")
+        return {"status": "success", "detail": result["message"]}
+    else:
+        # 4. Failure Voice
+        announce_action("Connection failed. Please check IP and Port")
+        raise HTTPException(status_code=400, detail=result["message"])
 
 if __name__ == "__main__":
     import uvicorn
